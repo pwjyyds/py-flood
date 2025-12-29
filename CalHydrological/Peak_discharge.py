@@ -6,7 +6,7 @@ from osgeo import ogr, gdal, osr
 
 import setting
 import CalHydrological.Common as HC
-
+from setting import *
 """
 Calculate the peak flood flow in the basin
 Qm_0: The default assumed value is 900 (m3/s)
@@ -59,7 +59,7 @@ def hongfeng(F, L, J, n, Sp, u, m):
         return qm_result
 
 
-def main(inFc, inRiver, inSlope, inSp, inN, inField):
+def main(inFc, inRiver, inSp, inN, inField):
     """
     Calculate the peak flood flow of each sub-basin
     :param inSeed: Seed point
@@ -69,7 +69,7 @@ def main(inFc, inRiver, inSlope, inSp, inN, inField):
     :param inSlope: Slope grid
     """
     print("-----------------The Computational Design Peak has begun to be implemented-----------------")
-    temp_riverInUnit = os.path.join(setting.output_dir, " temp_riverinunt.shp ")  # rasterized river
+    temp_riverInUnit = os.path.join(setting.output_dir, "temp_riverinunt.shp")  # rasterized river
     temp_river = os.path.join(setting.output_dir, 'temp_river.tif')  # rasterized river
 
     layer_ds = ogr.Open(setting.temp_units, 1)
@@ -109,7 +109,7 @@ def main(inFc, inRiver, inSlope, inSp, inN, inField):
             temp_xy = [x, temp_raster_yx[0][index]]
             temp_raster_xy.append(temp_xy)
 
-        slope_array = inSlope.ReadAsArray()
+        slope_array = (gdal.Open(temp_slope)).ReadAsArray()
         sum = 0
         for n in temp_raster_xy:
             slope_value = slope_array[n[1]][n[0]]

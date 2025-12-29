@@ -2,18 +2,12 @@
 import os.path
 
 from osgeo import gdal
-from osgeo.gdalconst import *  # GDAL中常用的一些常量
-import geopandas
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-from osgeo import ogr
-from matplotlib import colors
 
 import SimulateFlood.LongLine, SimulateFlood.CreateDivLine
 import CalHydrological.Common as HC
 import setting
-
+from setting import *
 
 def getSeedXY(seed, data, dmx, dem_array, field_z, field_h):
     """
@@ -76,7 +70,7 @@ def saveResult(data, floodPart, savePath):
     out_data_set = None
 
 
-def main(data, dmx, seed, inZField, inHField):
+def main(data, dmx, inZField, inHField):
     """
     Input data: DEM, section line, seed point (with flood peak water level)
     data = gdal.Open(r"E:\College\project\geoData\dsz_dem")  # DEM
@@ -93,7 +87,7 @@ def main(data, dmx, seed, inZField, inHField):
     print("Extended section line...")
     SimulateFlood.LongLine.main(dmx, temp_dmxLong)
     print("Cut the river...")
-    SimulateFlood.CreateDivLine.main(seed, temp_divLine)
+    SimulateFlood.CreateDivLine.main(temp_seed, temp_divLine)
     HC.vector2raster(inputfilePath=temp_divLine, outputfile=temp_divLine_tif)
     """
     Read all the cells occupied by the extended section lines and store them in the section line array
@@ -109,7 +103,7 @@ def main(data, dmx, seed, inZField, inHField):
     # a = pd.DataFrame(dmx_yx)
 
     # seed_dict = getSeedXY(seed, data)
-    seed_dict = getSeedXY(seed, data, dmx, dem_array, inZField, inHField)
+    seed_dict = getSeedXY(temp_seed, data, dmx, dem_array, inZField, inHField)
 
     """
     Simulated inundation area

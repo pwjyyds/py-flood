@@ -25,7 +25,9 @@ def Mnll(n, S, L, I):
     :param I: Descending
     :return: Flow
     """
-
+    # print(n,S,L,I)
+    if n == 0:
+        n = 0.025
     Q = pow(n, -1) * pow(S, 5 / 3.0) * pow(L, -2 / 3.0) * pow(I, 1 / 2.0)
     return Q
 
@@ -89,15 +91,21 @@ def main(inPoint, inLine, field_z, field_h, fields_Qm, fields_L, fields_S):
     tempUnitDs = ogr.Open(setting.temp_units, 1)
     layer_tempUnit = tempUnitDs.GetLayer()
     count_lyrPoints = layer_point.GetFeatureCount()
+    count_layer_dmx = layer_dmx.GetFeatureCount()
     thisDmxPoint_dmxID = layer_point.GetFeature(0).GetField(setting.dmxPoints_field['DmxID'])  # 当前断面点属于的断面线ID
     sameDmxPoints = []  # Points on the same cross-section
     h_result = 0
 
-    for i in range(count_lyrPoints):  # Traverse the cross-sectional points
-        fc_point = layer_point.GetFeature(i)
-        dmxID = fc_point.GetField(setting.dmxPoints_field['DmxID'])
+    for i in range(count_lyrPoints + 1):  # Traverse the cross-sectional points
+        if i < count_lyrPoints:
+            fc_point = layer_point.GetFeature(i)
+            dmxID = fc_point.GetField(setting.dmxPoints_field['DmxID'])
+        else:
+            fc_point = layer_point.GetFeature(count_lyrPoints - 1)
+            dmxID = count_lyrPoints + 1
 
         if thisDmxPoint_dmxID == dmxID:
+            # print("ififififififif", thisDmxPoint_dmxID, dmxID)
             # Points on the same cross-sectional line
             tempList = []
             tempList.append(fc_point.GetField(setting.dmxPoints_field['ObjectID']))
@@ -122,7 +130,9 @@ def main(inPoint, inLine, field_z, field_h, fields_Qm, fields_L, fields_S):
             else:
                 tempList.append(unitQm)
             sameDmxPoints.append(tempList)
+
         else:
+            # print('thisDmxPoint_dmxID != dmxID', thisDmxPoint_dmxID, dmxID)
             # Calculate the points of the previous cross-section
             if dmxID == 0:
                 aaaaaaaa = 1
@@ -170,11 +180,12 @@ def main(inPoint, inLine, field_z, field_h, fields_Qm, fields_L, fields_S):
             L_result = 0
 
             while True:  # Expand from the middle to both sides
-                S = square(beCalPoints, h_0,len(sameDmxPoints_more))  # Calculate the cross-sectional water passage area
+                S = square(beCalPoints, h_0,
+                           len(sameDmxPoints_more))  # Calculate the cross-sectional water passage area
                 L = zhouchang(beCalPoints, h_0, len(sameDmxPoints_more))  # Calculate the wet perimeter
                 Q = Mnll(n=beCalPoints[0][3],
                          S=S, L=L,
-                         I=beCalPoints[0][4]) # Calculate the peak flood flow of Manning
+                         I=beCalPoints[0][4])  # Calculate the peak flood flow of Manning
                 Qm = beCalPoints[0][5]
                 abs_error = abs(Q - Qm) / Qm
                 if abs_error <= 0.01:
@@ -197,10 +208,12 @@ def main(inPoint, inLine, field_z, field_h, fields_Qm, fields_L, fields_S):
                     break
             h_result = h_0
             # Assign a value to the section line
+            print(thisDmxPoint_dmxID)
             fc_line = layer_dmx.GetFeature(thisDmxPoint_dmxID)
             h_z = step * count_step
             if count_step == max_count:
                 h_z = step * (temp_history.index(min(temp_history)) + 1)
+
             HC.UpdateField(layer_dmx, fc_line, field_z, h_z)
             HC.UpdateField(layer_dmx, fc_line, fields_S, S_result)
             HC.UpdateField(layer_dmx, fc_line, fields_L, L_result)

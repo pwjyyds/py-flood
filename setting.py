@@ -10,7 +10,7 @@ fields_h = ['h5', 'h10', 'h20', 'h50', 'h100']  # 上升水位+高程
 fields_Qm = ['Qm5', 'Qm10', 'Qm20', 'Qm50', 'Qm100']  # 上升水位+高程
 fields_L = ['L5', 'L10', 'L20', 'L50', 'L100']  # 湿周长
 fields_S = ['S5', 'S10', 'S20', 'S50', 'S100']  # 断面积
-Qm_0 = 900  # 洪峰流量初试阈值
+Qm_0 = 1000  # 洪峰流量初试阈值
 raster_pixel_width = 30  # 栅格大小，默认30m
 
 # 字段名
@@ -40,22 +40,31 @@ unit_fields = {
 
 # 当前项目主目录
 project_dir = os.getcwd()  # E:\College\project\GD
-geodata_dir = os.path.join(project_dir, "geodata")
-
+geodata_dir = os.path.join(project_dir, "ningguo_geodata")
+# L:\College\project\GD\ningguo_geodata\Input\river.shp
 # 输入数据地址
 input_dir = os.path.join(geodata_dir,"Input")
+output_dir = os.path.join(geodata_dir,"Output")
+
 dem_dir = os.path.join(input_dir, "dem.tif")  # DEM
-dmx_dir = os.path.join(input_dir, "dxm_copy.shp")  # 断面线
+dmx_dir = os.path.join(input_dir, "dxm.shp")  # 断面线
 river_dir = os.path.join(input_dir, "river.shp")  # 河流线
-riverDiv_dir = os.path.join(input_dir, "river_div.shp")  # 打断的河流线
-slope_dir = os.path.join(input_dir, "slope.tif")  # 坡度（百分比）
-unit_dir = os.path.join(input_dir, "ZoneUnit.shp")  # 流域面
-flowDir_dir = os.path.join(input_dir, "flowDir.tif")  # 流域面
-seed_dir = os.path.join(input_dir, "seed.shp")  # 流域面
+# riverDiv_dir = os.path.join(input_dir, "river_div.shp")  # 打断的河流线
+# slope_dir = os.path.join(input_dir, "slope.tif")  # 坡度（百分比）
+unit_dir = os.path.join(input_dir, "ZoneUnit.shp")  # 范围面
+basin_dir = os.path.join(input_dir, "basin3.shp")  # 流域面
+# flowDir_dir = os.path.join(input_dir, "flowDir.tif")  # 流域面
+seed_dir = os.path.join(input_dir, "seed.shp")  # 种子点
+
+# print(river_dir)
 
 # 中间数据地址
-output_dir = os.path.join(geodata_dir,"Output")
 dmx_raster_dir = os.path.join(geodata_dir, "dmx_raster1")
 dmx_points = os.path.join(geodata_dir, "dmx_points.shp")
-temp_units = os.path.join(output_dir, 'temp_units.shp')  # 所有子流域
+temp_flowDir = os.path.join(output_dir, 'temp_flowDir.tif')  # 所有子流域
+temp_units = os.path.join(output_dir, 'basin3.shp')  # 所有子流域
+# temp_units = os.path.join(output_dir, 'temp_units.shp')  # 所有子流域
+temp_seed = os.path.join(output_dir, 'temp_seed.shp')  # 所有子流域
+temp_slope = os.path.join(output_dir, 'temp_slope.tif')  # 所有子流域
+temp_river_div = os.path.join(output_dir, 'temp_river_div.shp')  # 所有子流域
 temp_dmxLong = os.path.join(output_dir, 'temp_dmxLong.shp')  # 延长的断面线

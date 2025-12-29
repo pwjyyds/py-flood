@@ -36,8 +36,11 @@ def RainPow(H1, H2):
     param H2: Such as 24-hour designed rainstorm
     return:Sp and n
     """
+    print(H1, H2)
     n = 1 + 1.661 * (numpy.log10(H1) - numpy.log10(H2))
+    print(n)
     Sp = H2 * pow(24, n - 1)
+    print(Sp)
     return Sp, n
 
 
@@ -56,7 +59,8 @@ def main(inP, inFc):
     for i in range(layer_unit.GetFeatureCount()):
         fc_unit = layer_unit.GetFeature(i)
         listdata6.append([fc_unit.GetField(setting.unit_fields['H_6']), fc_unit.GetField(setting.unit_fields['Cv_6'])])
-        listdata24.append([fc_unit.GetField(setting.unit_fields['H_24']), fc_unit.GetField(setting.unit_fields['Cv_24'])])
+        listdata24.append(
+            [fc_unit.GetField(setting.unit_fields['H_24']), fc_unit.GetField(setting.unit_fields['Cv_24'])])
 
     print(" Calculate and save the design rainstorm...")
     # 添加字段
@@ -72,4 +76,4 @@ def main(inP, inFc):
         HC.UpdateField(layer_unit, fc_unit, setting.unit_fields['n'], temp[1])
         # print("h6 h24",H6,H24)
         # print("sp,n",temp[0],temp[1])
-    return temp[0],temp[1]  # Sp,n
+    return temp[0], temp[1]  # Sp,n
